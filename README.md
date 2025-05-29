@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,10 +18,23 @@
       margin: auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    h2 {
+      font-size: 24px;
+      color: #003300;
+    }
+    h3 {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #004d00;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
     input, button, select {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
+      margin-top: 5px;
       font-size: 16px;
     }
     .result {
@@ -30,94 +44,95 @@
       border-radius: 5px;
       color: #006600;
     }
-    h2 {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-    }
-    h3 {
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>คำนวณรายได้ประจำวัน</h2><label>วันที่:</label>
-<input type="date" id="date" />
+    <h2>คำนวณรายได้ประจำวัน</h2>
 
-<h3>รายรับ</h3>
-<label>รายได้จาก GRAB (บาท):</label>
-<input type="number" id="grab" />
+    <label>วันที่:</label>
+    <input type="date" id="date" />
 
-<label>รายได้จาก BOLT (บาท):</label>
-<input type="number" id="bolt" />
+    <h3>รายรับ</h3>
+    <label>รายได้จาก GRAB (บาท):</label>
+    <input type="number" id="grab" />
 
-<label>ทิป (บาท):</label>
-<input type="number" id="tip" />
+    <label>รายได้จาก BOLT (บาท):</label>
+    <input type="number" id="bolt" />
 
-<label>อื่นๆ (บาท):</label>
-<input type="number" id="otherIncome" />
+    <label>ทิป (บาท):</label>
+    <input type="number" id="tip" />
 
-<h3>รายจ่าย</h3>
-<label>ค่าน้ำมัน:</label>
-<input type="number" id="electricity" />
+    <label>รายรับอื่นๆ (บาท):</label>
+    <input type="number" id="extraIncome" />
 
-<label>รายจ่ายอื่นๆ:</label>
-<input type="number" id="otherExpense" />
+    <h3>รายจ่าย</h3>
+    <label>ค่าน้ำมัน (บาท):</label>
+    <input type="number" id="oil" />
 
-<h3>ระยะทางที่ใช้</h3>
-<label>เริ่มงาน (กม.):</label>
-<input type="number" id="startDistance" />
+    <label>รายจ่ายอื่นๆ (บาท):</label>
+    <input type="number" id="otherExpense" />
 
-<label>เลิกงาน (กม.):</label>
-<input type="number" id="endDistance" />
+    <h3>ระยะทางที่ใช้</h3>
+    <label>เริ่มงาน (กม.):</label>
+    <input type="number" id="startKm" />
 
-<button onclick="calculate()">คำนวณ</button>
+    <label>เลิกงาน (กม.):</label>
+    <input type="number" id="endKm" />
 
-<div class="result" id="result"></div>
+    <button onclick="calculate()">คำนวณ</button>
 
-  </div>  <script>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
     function calculate() {
       const date = document.getElementById('date').value;
       const grab = parseFloat(document.getElementById('grab').value) || 0;
-      const boltOriginal = parseFloat(document.getElementById('bolt').value) || 0;
-      const electricity = parseFloat(document.getElementById('electricity').value) || 0;
-      const other = parseFloat(document.getElementById('otherExpense').value) || 0;
+      const bolt = parseFloat(document.getElementById('bolt').value) || 0;
       const tip = parseFloat(document.getElementById('tip').value) || 0;
-      const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
-      const startDistance = parseFloat(document.getElementById('startDistance').value) || 0;
-      const endDistance = parseFloat(document.getElementById('endDistance').value) || 0;
+      const extraIncome = parseFloat(document.getElementById('extraIncome').value) || 0;
+      const oil = parseFloat(document.getElementById('oil').value) || 0;
+      const otherExpense = parseFloat(document.getElementById('otherExpense').value) || 0;
+      const startKm = parseFloat(document.getElementById('startKm').value) || 0;
+      const endKm = parseFloat(document.getElementById('endKm').value) || 0;
 
-      const distance = endDistance - startDistance;
-      const boltCommission = boltOriginal * 0.18;
-      const boltAfterCommission = boltOriginal - boltCommission;
-      const totalIncome = grab + boltAfterCommission + otherIncome;
-      const maintenance = totalIncome * 0.10;
-      const totalExpense = maintenance + electricity + other + boltCommission;
-      const netIncome = totalIncome - totalExpense + tip;
-      const incomePerKm = distance > 0 ? (netIncome / (distance * 10)).toFixed(2) : 0;
-      const halfIncomePlus10Percent = ((netIncome / 2) * 1.10).toFixed(2);
+      const distance = endKm - startKm;
+      const boltCommission = bolt * 0.18;
+      const boltAfter = bolt - boltCommission;
+
+      const totalIncomeBeforeMaintenance = grab + boltAfter + extraIncome;
+      const maintenance = totalIncomeBeforeMaintenance * 0.10;
+      const totalExpenses = oil + otherExpense + maintenance + boltCommission;
+      const netIncome = totalIncomeBeforeMaintenance - totalExpenses + tip;
+      const costPerKm10 = distance > 0 ? (netIncome / (distance * 10)).toFixed(2) : "0.00";
+      const halfIncomePlus10 = ((netIncome / 2) * 1.10).toFixed(2);
 
       const resultHTML = `
-        <strong>สรุปผลวันที่: ${date}</strong><br><br>
-        รายได้ GRAB: ${grab.toFixed(2)} บาท<br>
-        รายได้ BOLT (หักแล้ว 18%): ${boltAfterCommission.toFixed(2)} บาท (หักไป: ${boltCommission.toFixed(2)} บาท)<br>
-        รายได้อื่นๆ: ${otherIncome.toFixed(2)} บาท<br>
-        รวมรายได้: ${totalIncome.toFixed(2)} บาท<br>
+        <strong>สรุปผลประจำวันที่: ${date}</strong><br><br>
+        <strong>รายรับ</strong><br>
+        GRAB: ${grab.toFixed(2)} บาท<br>
+        BOLT: ${bolt.toFixed(2)} บาท (หัก 18%: ${boltCommission.toFixed(2)} บาท เหลือ: ${boltAfter.toFixed(2)} บาท)<br>
+        รายรับอื่นๆ: ${extraIncome.toFixed(2)} บาท<br>
+        รวมรายรับก่อนหักค่าซ่อม: ${totalIncomeBeforeMaintenance.toFixed(2)} บาท<br><br>
+
+        <strong>รายจ่าย</strong><br>
         ค่าซ่อม 10%: ${maintenance.toFixed(2)} บาท<br>
-        ค่าน้ำมัน: ${electricity.toFixed(2)} บาท<br>
-        รายจ่ายอื่น ๆ: ${other.toFixed(2)} บาท<br>
+        ค่าน้ำมัน: ${oil.toFixed(2)} บาท<br>
+        รายจ่ายอื่นๆ: ${otherExpense.toFixed(2)} บาท<br>
         ค่าคอมมิชชั่น BOLT: ${boltCommission.toFixed(2)} บาท<br>
-        ทิป: ${tip.toFixed(2)} บาท<br>
-        <strong>รายได้สุทธิ: ${netIncome.toFixed(2)} บาท</strong><br>
-        รายได้หาร 2 +10%: ${halfIncomePlus10Percent} บาท<br><br>
-        ระยะทางที่ใช้: ${distance} กม.<br>
-        บาทต่อกิโลเมตร (หาร 10): ${incomePerKm} บาท/กม.
+        รวมรายจ่ายทั้งหมด: ${totalExpenses.toFixed(2)} บาท<br><br>
+
+        <strong>ทิป:</strong> ${tip.toFixed(2)} บาท<br>
+        <strong>รายได้สุทธิ:</strong> ${netIncome.toFixed(2)} บาท<br>
+        <strong>หาร 2 +10%:</strong> ${halfIncomePlus10} บาท<br><br>
+
+        <strong>ระยะทางที่ใช้:</strong> ${distance} กม.<br>
+        <strong>บาทต่อกิโลเมตร (หาร 10):</strong> ${costPerKm10} บาท/กม.
       `;
 
       document.getElementById('result').innerHTML = resultHTML;
     }
-  </script></body>
+  </script>
+</body>
 </html>
